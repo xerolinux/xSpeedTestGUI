@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=xSpeedTest
+GenericName=Internet Speed Test
+Comment=Measure download, upload and latency with speedtest-cli
+Exec=xspeedtest
+Icon=xspeedtest
+Terminal=false
+Categories=Network;Monitor;Qt;KDE;
+Keywords=speed;test;bandwidth;internet;ping;

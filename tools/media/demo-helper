@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+import json
+import math
+import sys
+import time
+
+
+def emit(**fields):
+    sys.stdout.write(json.dumps(fields) + "\n")
+    sys.stdout.flush()
+
+
+for i in range(6):
+    emit(phase="ping", progress=i / 5)
+    time.sleep(0.08)
+emit(phase="server", name="Thessaloniki", sponsor="Inalan ISP", country="Greece", ping=15.7)
+emit(phase="jitter", jitter=1.8)
+
+for phase, top in (("download", 300), ("upload", 150)):
+    steps = 25
+    for i in range(1, steps + 1):
+        x = i / steps
+        emit(phase=phase, mbps=round(top * (1 - math.exp(-5 * x)) * (1 + 0.04 * math.sin(i * 1.7)), 2), progress=round(x, 3))
+        time.sleep(0.1)
+    emit(phase=phase, mbps=top * 0.98, progress=1.0)
+
+emit(phase="done", ping=15.7, jitter=1.8, download=294.0, upload=147.0,
+     server="Thessaloniki, Greece (Inalan ISP)", isp="Example ISP", timestamp="2026-09-26T20:00:00+00:00")
