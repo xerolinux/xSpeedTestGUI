@@ -13,15 +13,19 @@ Item {
     property bool compact: false
     property bool animate: true
     property bool idleDrift: true
-    property bool settingsOpen: false
+    property string page: "main"
     property string settingsTitle: qsTr("Settings")
     property real padding: Kirigami.Units.gridUnit * 1.5
     property real controlsInset: 0
 
     readonly property var style: view.style
 
-    implicitWidth: (settingsOpen ? page.implicitWidth : view.implicitWidth) + padding * 2
-    implicitHeight: column.implicitHeight + padding * 2
+    function toggle(name) {
+        page = page === name ? "main" : name;
+    }
+
+    implicitWidth: Math.max(view.implicitWidth, settingsPage.implicitWidth, historyPage.implicitWidth) + padding * 2
+    implicitHeight: header.implicitHeight + column.spacing + Math.max(view.implicitHeight, settingsPage.implicitHeight, historyPage.implicitHeight) + padding * 2
 
     ColumnLayout {
         id: column
@@ -30,14 +34,15 @@ Item {
         spacing: Kirigami.Units.largeSpacing
 
         RowLayout {
+            id: header
             Layout.fillWidth: true
             Layout.topMargin: Kirigami.Units.smallSpacing - root.padding
             Layout.rightMargin: Kirigami.Units.smallSpacing - root.padding + root.controlsInset
             spacing: 0
 
             Kirigami.Heading {
-                visible: root.settingsOpen
-                text: root.settingsTitle
+                visible: root.page !== "main"
+                text: root.page === "history" ? qsTr("Test History") : root.settingsTitle
                 level: 2
             }
             Item {
@@ -45,33 +50,57 @@ Item {
             }
             QQC2.ToolButton {
                 checkable: true
-                checked: root.settingsOpen
+                checked: root.page === "history"
+                icon.name: "view-history"
+                onClicked: root.toggle("history")
+                QQC2.ToolTip.text: qsTr("Test History")
+                QQC2.ToolTip.visible: hovered
+            }
+            QQC2.ToolButton {
+                checkable: true
+                checked: root.page === "settings"
                 icon.name: "configure-symbolic"
-                onClicked: root.settingsOpen = checked
+                onClicked: root.toggle("settings")
                 QQC2.ToolTip.text: qsTr("Settings")
                 QQC2.ToolTip.visible: hovered
             }
         }
 
-        SpeedView {
-            id: view
+        Item {
             Layout.fillWidth: true
-            visible: !root.settingsOpen
-            runner: root.runner
-            settings: root.settings
-            history: root.history
-            compact: root.compact
-            animate: root.animate && !root.settingsOpen
-            idleDrift: root.idleDrift
-        }
+            Layout.fillHeight: true
+            implicitWidth: Math.max(view.implicitWidth, settingsPage.implicitWidth, historyPage.implicitWidth)
+            implicitHeight: Math.max(view.implicitHeight, settingsPage.implicitHeight, historyPage.implicitHeight)
 
-        SettingsPage {
-            id: page
-            Layout.fillWidth: true
-            visible: root.settingsOpen
-            settings: root.settings
-            history: root.history
-            installer: root.installer
+            SpeedView {
+                id: view
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: implicitHeight
+                visible: root.page === "main"
+                runner: root.runner
+                settings: root.settings
+                compact: root.compact
+                animate: root.animate && root.page === "main"
+                idleDrift: root.idleDrift
+            }
+
+            HistoryPage {
+                id: historyPage
+                anchors.fill: parent
+                visible: root.page === "history"
+                settings: root.settings
+                history: root.history
+            }
+
+            SettingsPage {
+                id: settingsPage
+                anchors.fill: parent
+                visible: root.page === "settings"
+                settings: root.settings
+                installer: root.installer
+                showOpacity: !root.compact
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ Needs a built tree (default: build), qml6, ffmpeg and the KDE platform theme. Fr
 offscreen with the demo helper, so no network and no visible windows are involved.
 """
 import concurrent.futures
+import json
 import os
 import random
 import re
@@ -22,6 +23,13 @@ MEDIA = ROOT / "docs" / "media"
 THUMB = (200, 170)
 FULL_WIDTH = 420
 BACKDROP = "0x12141c"
+SAMPLE_HISTORY = [
+    {"timestamp": "2026-09-26T21:14:00+00:00", "download": 294.0, "upload": 147.0, "ping": 15.7, "jitter": 1.8, "server": "Thessaloniki"},
+    {"timestamp": "2026-09-26T18:02:00+00:00", "download": 301.4, "upload": 151.2, "ping": 16.1, "jitter": 2.1, "server": "Thessaloniki"},
+    {"timestamp": "2026-09-26T09:47:00+00:00", "download": 288.9, "upload": 143.6, "ping": 18.4, "jitter": 2.6, "server": "Thessaloniki"},
+    {"timestamp": "2026-09-25T22:31:00+00:00", "download": 296.2, "upload": 149.8, "ping": 15.2, "jitter": 1.5, "server": "Thessaloniki"},
+    {"timestamp": "2026-09-25T13:05:00+00:00", "download": 279.5, "upload": 138.1, "ping": 21.0, "jitter": 3.4, "server": "Thessaloniki"},
+]
 ENV = dict(os.environ,
            QT_QPA_PLATFORM="offscreen",
            QT_QPA_PLATFORMTHEME="kde",
@@ -36,6 +44,8 @@ def styles():
 
 def capture(style, mode, out):
     out.mkdir(parents=True, exist_ok=True)
+    if mode == "history":
+        (out / "history.json").write_text(json.dumps(SAMPLE_HISTORY))
     env = dict(ENV)
     if mode == "settings":
         env["XDG_DATA_HOME"] = str(out / "data")
@@ -78,10 +88,11 @@ def extras(hero_style):
         frames = Path(tmp)
         capture("downpour", "compact", frames)
         gif(frames, MEDIA / "widget-popup.gif", 10, "scale=300:-2:flags=lanczos", 96)
-    with tempfile.TemporaryDirectory() as tmp:
-        frames = Path(tmp)
-        capture("downpour", "settings", frames)
-        shutil.copy(frames / "f000.png", MEDIA / "settings.png")
+    for mode in ("settings", "history"):
+        with tempfile.TemporaryDirectory() as tmp:
+            frames = Path(tmp)
+            capture("downpour", mode, frames)
+            shutil.copy(frames / "f000.png", MEDIA / f"{mode}.png")
 
 
 def main():

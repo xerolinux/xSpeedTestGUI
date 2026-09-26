@@ -11,7 +11,8 @@ Window {
     readonly property string mode: args[args.length - 2]
     readonly property string outDir: args[args.length - 1]
     readonly property int frameMs: 100
-    readonly property int frameCount: mode === "settings" ? 1 : 78
+    readonly property bool still: mode === "settings" || mode === "history"
+    readonly property int frameCount: still ? 1 : 78
 
     property int taken: 0
 
@@ -33,7 +34,6 @@ Window {
 
     SpeedTestRunner {
         id: runner
-        history: win.mode === "settings" ? history : null
     }
 
     Item {
@@ -66,10 +66,10 @@ Window {
                 padding: Kirigami.Units.gridUnit * 1.5
                 controlsInset: win.mode === "compact" ? 0 : closeButton.width
                 compact: win.mode === "compact"
-                settingsOpen: win.mode === "settings"
+                page: win.still ? win.mode : "main"
                 runner: runner
                 settings: settings
-                history: win.mode === "settings" ? history : null
+                history: history
                 installer: win.mode === "settings" ? installerObject : null
                 settingsTitle: qsTr("App settings")
             }
@@ -91,7 +91,7 @@ Window {
 
     Timer {
         interval: 300
-        running: win.mode !== "settings"
+        running: !win.still
         onTriggered: runner.start()
     }
 

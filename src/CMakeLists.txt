@@ -13,7 +13,6 @@ target_sources(xspeedtest PRIVATE
     paths.cpp
     plasmoidinstaller.cpp
     speedsettings.cpp
-    systemblur.cpp
     speedtestrunner.cpp
     windowblur.cpp
 )
@@ -24,9 +23,11 @@ ecm_target_qml_sources(xspeedtest SOURCES
     qml/CenterLayout.qml
     qml/CompactLayout.qml
     qml/DualLayout.qml
+    qml/HistoryPage.qml
     qml/MinimalLayout.qml
     qml/Readout.qml
     qml/SettingsPage.qml
+    qml/SettingsRow.qml
     qml/SpeedPanel.qml
     qml/SpeedView.qml
     qml/SplitLayout.qml

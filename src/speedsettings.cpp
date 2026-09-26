@@ -108,13 +108,6 @@ void SpeedSettings::setAutoStart(bool enabled)
     update(v);
 }
 
-void SpeedSettings::setShowHistory(bool enabled)
-{
-    Values v = m_values;
-    v.showHistory = enabled;
-    update(v);
-}
-
 void SpeedSettings::setAnimate(bool enabled)
 {
     Values v = m_values;
@@ -153,7 +146,6 @@ void SpeedSettings::load()
     v.unit = unit >= Kbps && unit <= MBps ? SpeedUnit(unit) : Mbps;
     v.backend = validBackend(raw.value(QStringLiteral("backend"), v.backend).toString());
     v.autoStart = raw.value(QStringLiteral("autoStart"), v.autoStart).toBool();
-    v.showHistory = raw.value(QStringLiteral("showHistory"), v.showHistory).toBool();
     v.animate = raw.value(QStringLiteral("animate"), v.animate).toBool();
     v.opacity = std::clamp(raw.value(QStringLiteral("glassOpacity"), v.opacity).toDouble(), MinOpacity, MaxOpacity);
     const QString style = raw.value(QStringLiteral("style")).toString();
@@ -173,7 +165,6 @@ void SpeedSettings::save()
     raw.setValue(QStringLiteral("speedUnit"), int(m_values.unit));
     raw.setValue(QStringLiteral("backend"), m_values.backend);
     raw.setValue(QStringLiteral("autoStart"), m_values.autoStart);
-    raw.setValue(QStringLiteral("showHistory"), m_values.showHistory);
     raw.setValue(QStringLiteral("animate"), m_values.animate);
     raw.setValue(QStringLiteral("glassOpacity"), m_values.opacity);
     raw.setValue(QStringLiteral("style"), m_values.style);

@@ -4,7 +4,7 @@ A modern Qt 6 / QML speed test for KDE Plasma. It measures download, upload, pin
 
 <p align="center">
   <img src="docs/media/app.gif" alt="xSpeedTest running a test" width="560"><br>
-  <sub>The app mid-test with a randomly picked style (Dual Orb). Every style is listed in the <a href="#styles">gallery</a> below.</sub>
+  <sub>The app mid-test with a randomly picked style (Sunburst). Every style is listed in the <a href="#styles">gallery</a> below.</sub>
 </p>
 
 ## Features
@@ -19,7 +19,7 @@ A modern Qt 6 / QML speed test for KDE Plasma. It measures download, upload, pin
 
 ## Settings
 
-Open the settings page with the cog next to the close button. Every option is staged: nothing changes until you press **Apply**, and Apply is only enabled when something differs.
+Open the settings page with the cog next to the close button. The window keeps the same size on every page. Options are staged: nothing changes until you press **Apply**, and Apply is only enabled when something differs. Window opacity is the exception and changes live as you drag it.
 
 <p align="center">
   <img src="docs/media/settings.png" alt="App settings page" width="440">
@@ -31,14 +31,21 @@ Open the settings page with the cog next to the close button. Every option is st
 | Speed unit | Mbps, kbps, MBps or KBps. Applies to the readout, the stat boxes, history and tooltips. |
 | Test server | Automatic (closest and fastest), speedtest-cli servers only, or Cloudflare only. |
 | Test on launch | Starts a test as soon as the app opens. |
-| Recent results | Shows the last results under the test. |
 | Animation | Turns the stream animation on or off. |
-| Window opacity | Opacity of the window surface, 10 to 100 percent (default 36). |
-| Blur strength | KWin blur strength from 1 to 15. This is a global KWin setting, so it changes the blur of every window on your desktop. |
-| Clear history | Deletes the saved results (the last 50 are kept). |
+| Window opacity | Opacity of the window surface, 10 to 100 percent (default 36). Applies live, no Apply needed. |
 | Plasma widget | Install the widget, or update it when a newer version is bundled with the app. |
 
+Window blur is controlled by KWin and your Kvantum theme, so xSpeedTest asks for blur but has no blur setting of its own.
+
 The app stores its settings in `~/.config/xspeedtest/app.conf` and the widget in `~/.config/xspeedtest/plasmoid.conf`. Results history is shared.
+
+## Test History
+
+The clock button next to the cog opens **Test History**: every saved result (the last 50) with its date and time, download and upload in your chosen unit. **Clear history** empties it.
+
+<p align="center">
+  <img src="docs/media/history.png" alt="Test History page" width="440">
+</p>
 
 ## Plasma widget
 
@@ -48,7 +55,7 @@ The app stores its settings in `~/.config/xspeedtest/app.conf` and the widget in
 
 - On the **desktop** the widget shows the full layout of the selected style on its own translucent surface.
 - In the **panel** it is an icon with a tooltip of the last result. Click it for the compact popup shown above.
-- The cog in the widget opens the widget's own settings page.
+- The cog and the history button in the widget open its own settings page and the shared Test History. The popup has no opacity slider, because Plasma draws the popup frame.
 
 Install it from the app: open the settings and press **Install Plasmoid**, then add xSpeedTest from Add Widgets. When the app bundles a newer widget, the button becomes **Update Plasmoid**. An update restarts the Plasma shell so the new widget loads, and your panels and desktop reload for a few seconds.
 
@@ -62,25 +69,6 @@ makepkg -si
 ```
 
 The package depends on `qt6-base`, `qt6-declarative`, `kirigami`, `qqc2-desktop-style`, `kwindowsystem`, `libplasma`, `python` and `speedtest-cli`. Then start **xSpeedTest** from the launcher or run `xspeedtest`.
-
-Build and test from a checkout:
-
-```sh
-cmake -S . -B build -G Ninja
-cmake --build build
-QT_QPA_PLATFORM=offscreen ctest --test-dir build
-./build/bin/xspeedtest
-```
-
-## How it measures
-
-speedtest-cli 2.1.3 under-reports on fast lines, and its server list is now only ten servers. xSpeedTest keeps the speedtest module for discovery and runs its own transfers:
-
-1. Every candidate server is pinged eight times over one keep-alive connection. Servers that fail or answer unreliably are dropped.
-2. The candidates within about twice the best latency get a 2.5 second download probe. The closest one that reaches at least 85 percent of the fastest probe wins.
-3. Download and upload each run four parallel connections for 8 seconds. The result is the byte rate after a 2.5 second warm-up, so TCP slow start does not drag it down.
-
-`XSPEEDTEST_BACKEND=speedtest|cloudflare|auto` restricts the server pool. The same option is in the settings.
 
 ## Styles
 
@@ -106,9 +94,3 @@ Click any preview to open it full size.
 | **Dual Trace**<br><sub>Dual stage</sub> | <a href="docs/media/full/dual-trace.gif"><img src="docs/media/thumb/dual-trace.gif" width="200" height="170" alt="Dual Trace"></a> | **Dual Spectrum**<br><sub>Dual stage</sub> | <a href="docs/media/full/dual-spectrum.gif"><img src="docs/media/thumb/dual-spectrum.gif" width="200" height="170" alt="Dual Spectrum"></a> |
 | **Dual Dial**<br><sub>Dual stage</sub> | <a href="docs/media/full/dual-dial.gif"><img src="docs/media/thumb/dual-dial.gif" width="200" height="170" alt="Dual Dial"></a> | **Quiet Ribbon**<br><sub>Minimal</sub> | <a href="docs/media/full/quiet-ribbon.gif"><img src="docs/media/thumb/quiet-ribbon.gif" width="200" height="170" alt="Quiet Ribbon"></a> |
 | **Pulse Spectrum**<br><sub>Minimal</sub> | <a href="docs/media/full/pulse-spectrum.gif"><img src="docs/media/thumb/pulse-spectrum.gif" width="200" height="170" alt="Pulse Spectrum"></a> |  |  |
-
-## Development
-
-- Tests: `QT_QPA_PLATFORM=offscreen ctest --test-dir build`
-- Regenerate the images and GIFs in this file with `tools/media/make-media.py` (needs a built tree, `qml6` and `ffmpeg`). It renders every style offscreen against a scripted demo helper, so it needs no network.
-- The design and the implementation plan are in `docs/superpowers/`.

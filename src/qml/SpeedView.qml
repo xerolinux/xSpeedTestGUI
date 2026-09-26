@@ -8,7 +8,6 @@ Item {
 
     required property SpeedTestRunner runner
     required property SpeedSettings settings
-    property HistoryModel history: null
     property bool compact: false
     property bool animate: true
     property bool idleDrift: true
@@ -57,8 +56,8 @@ Item {
         }
     }
 
-    implicitWidth: column.implicitWidth
-    implicitHeight: column.implicitHeight
+    implicitWidth: loader.implicitWidth
+    implicitHeight: loader.implicitHeight
 
     Component { id: centerLayout; CenterLayout { view: root } }
     Component { id: wideLayout; WideLayout { view: root } }
@@ -67,58 +66,9 @@ Item {
     Component { id: minimalLayout; MinimalLayout { view: root } }
     Component { id: compactLayout; CompactLayout { view: root } }
 
-    ColumnLayout {
-        id: column
+    Loader {
+        id: loader
         anchors.fill: parent
-        spacing: Kirigami.Units.gridUnit
-
-        Loader {
-            Layout.fillWidth: true
-            sourceComponent: root.layoutComponent(root.layoutName)
-        }
-
-        ListView {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(count, 4) * Kirigami.Units.gridUnit * 1.6
-            visible: !root.compact && root.settings.showHistory && count > 0
-            interactive: false
-            clip: true
-            model: root.history
-
-            delegate: RowLayout {
-                required property string timestamp
-                required property double download
-                required property double upload
-                required property double ping
-
-                width: ListView.view.width
-                height: Kirigami.Units.gridUnit * 1.6
-
-                QQC2.Label {
-                    Layout.fillWidth: true
-                    text: Qt.formatDateTime(new Date(timestamp), "d MMM, hh:mm")
-                    color: Kirigami.Theme.disabledTextColor
-                }
-                QQC2.Label { text: qsTr("%1 %2 down").arg(Stream.speed(download, root.settings)).arg(root.settings.unitLabel) }
-                QQC2.Label { text: qsTr("%1 %2 up").arg(Stream.speed(upload, root.settings)).arg(root.settings.unitLabel) }
-                QQC2.Label {
-                    text: qsTr("%1 ms").arg(ping.toFixed(0))
-                    color: Kirigami.Theme.disabledTextColor
-                }
-            }
-        }
-
-        QQC2.Label {
-            Layout.fillWidth: true
-            visible: root.compact && root.history && root.history.count > 0
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
-            color: Kirigami.Theme.disabledTextColor
-            font.pixelSize: Kirigami.Theme.smallFont.pixelSize
-            text: root.history ? qsTr("Last: %1 down, %2 up, %3 ms")
-                .arg(Stream.speed(root.history.lastDownload, root.settings) + " " + root.settings.unitLabel)
-                .arg(Stream.speed(root.history.lastUpload, root.settings) + " " + root.settings.unitLabel)
-                .arg(root.history.lastPing.toFixed(0)) : ""
-        }
+        sourceComponent: root.layoutComponent(root.layoutName)
     }
 }

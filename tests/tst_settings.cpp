@@ -19,7 +19,6 @@ private slots:
         QCOMPARE(s.speedUnit(), SpeedSettings::Mbps);
         QCOMPARE(s.backend(), QString("auto"));
         QVERIFY(!s.autoStart());
-        QVERIFY(s.showHistory());
         QVERIFY(s.animate());
         QCOMPARE(s.glassOpacity(), 0.36);
         QCOMPARE(s.style(), QString("downpour"));
@@ -54,7 +53,6 @@ private slots:
             s.setSpeedUnit(SpeedSettings::MBps);
             s.setBackend("cloudflare");
             s.setAutoStart(true);
-            s.setShowHistory(false);
             s.setAnimate(false);
             s.setGlassOpacity(0.5);
             s.setStyle("aurora-arc");
@@ -64,7 +62,6 @@ private slots:
         QCOMPARE(s.speedUnit(), SpeedSettings::MBps);
         QCOMPARE(s.backend(), QString("cloudflare"));
         QVERIFY(s.autoStart());
-        QVERIFY(!s.showHistory());
         QVERIFY(!s.animate());
         QCOMPARE(s.glassOpacity(), 0.5);
         QCOMPARE(s.style(), QString("aurora-arc"));

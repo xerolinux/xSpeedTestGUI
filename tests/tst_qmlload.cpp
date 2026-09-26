@@ -56,22 +56,29 @@ private slots:
         QCOMPARE(ids.size(), 35);
         for (const QString &id : ids) {
             for (const char *compact : {"false", "true"}) {
-                load(qPrintable(QStringLiteral("SpeedView {\n runner: SpeedTestRunner {}\n settings: SpeedSettings { style: \"%1\" }\n history: HistoryModel {}\n compact: %2\n}").arg(id, QLatin1String(compact))));
+                load(qPrintable(QStringLiteral("SpeedView {\n runner: SpeedTestRunner {}\n settings: SpeedSettings { style: \"%1\" }\n compact: %2\n}").arg(id, QLatin1String(compact))));
             }
         }
     }
 
-    void speedPanelLoadsWithAndWithoutInstaller()
+    void speedPanelLoadsEveryPage()
     {
-        load("SpeedPanel {\n runner: SpeedTestRunner {}\n settings: SpeedSettings {}\n history: HistoryModel {}\n installer: PlasmoidInstaller {}\n}");
-        load("SpeedPanel {\n runner: SpeedTestRunner {}\n settings: SpeedSettings {}\n history: HistoryModel {}\n compact: true\n settingsOpen: true\n}");
+        for (const char *page : {"main", "history", "settings"}) {
+            load(qPrintable(QStringLiteral("SpeedPanel {\n runner: SpeedTestRunner {}\n settings: SpeedSettings {}\n history: HistoryModel {}\n installer: PlasmoidInstaller {}\n page: \"%1\"\n}").arg(QLatin1String(page))));
+            load(qPrintable(QStringLiteral("SpeedPanel {\n runner: SpeedTestRunner {}\n settings: SpeedSettings {}\n history: HistoryModel {}\n compact: true\n page: \"%1\"\n}").arg(QLatin1String(page))));
+        }
+    }
+
+    void historyPageLoads()
+    {
+        load("HistoryPage {\n settings: SpeedSettings {}\n history: HistoryModel {}\n}");
     }
 
     void windowBlurLoads() { load("Item { WindowBlur { radius: 12 } }"); }
 
     void settingsPageLoads()
     {
-        load("SettingsPage {\n settings: SpeedSettings {}\n history: HistoryModel {}\n installer: PlasmoidInstaller {}\n}");
+        load("SettingsPage {\n settings: SpeedSettings {}\n installer: PlasmoidInstaller {}\n}");
     }
 
     void plasmoidInstallerLoads() { load("PlasmoidInstaller {}"); }

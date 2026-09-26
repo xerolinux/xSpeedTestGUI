@@ -9,8 +9,6 @@ endfunction()
 
 xspeedtest_test(tst_history ${CORE_SRC}/historymodel.cpp)
 
-xspeedtest_test(tst_systemblur ${CORE_SRC}/systemblur.cpp)
-
 xspeedtest_test(tst_settings ${CORE_SRC}/speedsettings.cpp)
 
 xspeedtest_test(tst_plasmoidinstaller ${CORE_SRC}/plasmoidinstaller.cpp ${CORE_SRC}/paths.cpp)

@@ -14,7 +14,6 @@ class SpeedSettings : public QObject
     Q_PROPERTY(QString unitLabel READ unitLabel NOTIFY changed)
     Q_PROPERTY(QString backend READ backend WRITE setBackend NOTIFY changed)
     Q_PROPERTY(bool autoStart READ autoStart WRITE setAutoStart NOTIFY changed)
-    Q_PROPERTY(bool showHistory READ showHistory WRITE setShowHistory NOTIFY changed)
     Q_PROPERTY(bool animate READ animate WRITE setAnimate NOTIFY changed)
     Q_PROPERTY(QString style READ style WRITE setStyle NOTIFY changed)
     Q_PROPERTY(double glassOpacity READ glassOpacity WRITE setGlassOpacity NOTIFY changed)
@@ -40,8 +39,6 @@ public:
     void setBackend(const QString &backend);
     bool autoStart() const { return m_values.autoStart; }
     void setAutoStart(bool enabled);
-    bool showHistory() const { return m_values.showHistory; }
-    void setShowHistory(bool enabled);
     bool animate() const { return m_values.animate; }
     void setAnimate(bool enabled);
     QString style() const { return m_values.style; }
@@ -59,7 +56,6 @@ private:
         SpeedUnit unit = Mbps;
         QString backend = QStringLiteral("auto");
         bool autoStart = false;
-        bool showHistory = true;
         bool animate = true;
         double opacity = 0.36;
         QString style = QStringLiteral("downpour");

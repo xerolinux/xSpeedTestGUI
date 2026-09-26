@@ -7,8 +7,8 @@ Item {
     id: root
 
     required property SpeedSettings settings
-    required property HistoryModel history
     property PlasmoidInstaller installer: null
+    property bool showOpacity: true
 
     property bool justInstalled: false
 
@@ -16,25 +16,20 @@ Item {
     property int pendingUnit: settings.speedUnit
     property string pendingBackend: settings.backend
     property bool pendingAutoStart: settings.autoStart
-    property bool pendingShowHistory: settings.showHistory
     property bool pendingAnimate: settings.animate
-    property real pendingOpacity: settings.glassOpacity
-    property int pendingBlur: blur.strength
 
     readonly property bool dirty: pendingStyle !== settings.style
         || pendingUnit !== settings.speedUnit
         || pendingBackend !== settings.backend
         || pendingAutoStart !== settings.autoStart
-        || pendingShowHistory !== settings.showHistory
         || pendingAnimate !== settings.animate
-        || Math.abs(pendingOpacity - settings.glassOpacity) > 0.0001
-        || pendingBlur !== blur.strength
 
-    implicitWidth: Kirigami.Units.gridUnit * 27
-    implicitHeight: layout.implicitHeight
+    implicitWidth: Kirigami.Units.gridUnit * 22
+    implicitHeight: Kirigami.Units.gridUnit * 20
 
-    SystemBlur {
-        id: blur
+    component Gap: Item {
+        Layout.fillHeight: true
+        Layout.minimumHeight: Kirigami.Units.smallSpacing
     }
 
     function apply() {
@@ -42,11 +37,7 @@ Item {
         settings.speedUnit = pendingUnit;
         settings.backend = pendingBackend;
         settings.autoStart = pendingAutoStart;
-        settings.showHistory = pendingShowHistory;
         settings.animate = pendingAnimate;
-        settings.glassOpacity = pendingOpacity;
-        if (pendingBlur !== blur.strength)
-            blur.apply(pendingBlur);
     }
 
     function installPlasmoid() {
@@ -57,14 +48,16 @@ Item {
     ColumnLayout {
         id: layout
         anchors.fill: parent
-        spacing: Kirigami.Units.largeSpacing
+        spacing: 0
 
-        Kirigami.FormLayout {
-            Layout.fillWidth: true
+        Gap {}
+
+        SettingsRow {
+            label: qsTr("Style")
 
             QQC2.ComboBox {
                 id: styleBox
-                Kirigami.FormData.label: qsTr("Style")
+                Layout.fillWidth: true
                 textRole: "name"
                 valueRole: "id"
                 model: Styles.list
@@ -74,10 +67,16 @@ Item {
                     restoreMode: Binding.RestoreNone
                 }
             }
+        }
+
+        Gap {}
+
+        SettingsRow {
+            label: qsTr("Speed unit")
 
             QQC2.ComboBox {
                 id: unit
-                Kirigami.FormData.label: qsTr("Speed unit")
+                Layout.fillWidth: true
                 textRole: "text"
                 valueRole: "value"
                 model: [
@@ -92,10 +91,16 @@ Item {
                     restoreMode: Binding.RestoreNone
                 }
             }
+        }
+
+        Gap {}
+
+        SettingsRow {
+            label: qsTr("Test server")
 
             QQC2.ComboBox {
                 id: backend
-                Kirigami.FormData.label: qsTr("Test server")
+                Layout.fillWidth: true
                 textRole: "text"
                 valueRole: "value"
                 model: [
@@ -109,116 +114,91 @@ Item {
                     restoreMode: Binding.RestoreNone
                 }
             }
+        }
+
+        Gap {}
+
+        SettingsRow {
+            label: qsTr("Test on launch")
 
             QQC2.Switch {
-                Kirigami.FormData.label: qsTr("Test on launch")
                 onToggled: root.pendingAutoStart = checked
                 Binding on checked {
                     value: root.pendingAutoStart
                     restoreMode: Binding.RestoreNone
                 }
             }
+        }
+
+        Gap {}
+
+        SettingsRow {
+            label: qsTr("Animation")
 
             QQC2.Switch {
-                Kirigami.FormData.label: qsTr("Recent results")
-                onToggled: root.pendingShowHistory = checked
-                Binding on checked {
-                    value: root.pendingShowHistory
-                    restoreMode: Binding.RestoreNone
-                }
-            }
-
-            QQC2.Switch {
-                Kirigami.FormData.label: qsTr("Animation")
                 onToggled: root.pendingAnimate = checked
                 Binding on checked {
                     value: root.pendingAnimate
                     restoreMode: Binding.RestoreNone
                 }
             }
+        }
 
-            RowLayout {
-                Kirigami.FormData.label: qsTr("Window opacity")
+        Gap { visible: root.showOpacity }
 
-                QQC2.Slider {
-                    from: 0.1
-                    to: 1
-                    stepSize: 0.01
-                    onMoved: root.pendingOpacity = value
-                    Binding on value {
-                        value: root.pendingOpacity
-                        restoreMode: Binding.RestoreNone
-                    }
-                }
-                QQC2.Label {
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 2.5
-                    text: Math.round(root.pendingOpacity * 100) + "%"
-                }
-            }
+        SettingsRow {
+            visible: root.showOpacity
+            label: qsTr("Window opacity")
 
-            RowLayout {
-                Kirigami.FormData.label: qsTr("Blur strength")
-                enabled: blur.available
-
-                QQC2.Slider {
-                    from: 1
-                    to: 15
-                    stepSize: 1
-                    onMoved: root.pendingBlur = Math.round(value)
-                    Binding on value {
-                        value: root.pendingBlur
-                        restoreMode: Binding.RestoreNone
-                    }
-                }
-                QQC2.Label {
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 2.5
-                    text: root.pendingBlur
+            QQC2.Slider {
+                Layout.fillWidth: true
+                from: 0.1
+                to: 1
+                stepSize: 0.01
+                onMoved: root.settings.glassOpacity = value
+                Binding on value {
+                    value: root.settings.glassOpacity
+                    restoreMode: Binding.RestoreNone
                 }
             }
+            QQC2.Label {
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 2.5
+                text: Math.round(root.settings.glassOpacity * 100) + "%"
+            }
+        }
 
+        Gap { visible: root.installer !== null }
+
+        SettingsRow {
+            visible: root.installer !== null
+            label: qsTr("Plasma widget")
+
+            QQC2.Label {
+                text: !root.installer ? "" : root.installer.outdated ? qsTr("Update available") : root.installer.userInstalled ? qsTr("Installed") : root.installer.installed ? qsTr("Installed by the system") : qsTr("Not installed")
+                color: root.installer && root.installer.outdated ? Kirigami.Theme.textColor : Kirigami.Theme.disabledTextColor
+            }
             QQC2.Button {
-                Kirigami.FormData.label: qsTr("Results")
-                text: qsTr("Clear history")
-                enabled: root.history.count > 0
-                onClicked: root.history.clear()
+                visible: root.installer && !root.installer.installed
+                text: qsTr("Install Plasmoid")
+                onClicked: root.installPlasmoid()
             }
-
-            RowLayout {
-                visible: root.installer !== null
-                Kirigami.FormData.label: qsTr("Plasma widget")
-
-                QQC2.Label {
-                    text: !root.installer ? "" : root.installer.outdated ? qsTr("Update available") : root.installer.userInstalled ? qsTr("Installed") : root.installer.installed ? qsTr("Installed by the system") : qsTr("Not installed")
-                    color: root.installer && root.installer.outdated ? Kirigami.Theme.textColor : Kirigami.Theme.disabledTextColor
-                }
-                QQC2.Button {
-                    visible: root.installer && !root.installer.installed
-                    text: qsTr("Install Plasmoid")
-                    onClicked: root.installPlasmoid()
-                }
-                QQC2.Button {
-                    visible: root.installer && root.installer.outdated
-                    text: qsTr("Update Plasmoid")
-                    onClicked: root.installer.update()
-                }
+            QQC2.Button {
+                visible: root.installer && root.installer.outdated
+                text: qsTr("Update Plasmoid")
+                onClicked: root.installer.update()
+            }
+            Item {
+                Layout.fillWidth: true
             }
         }
 
         QQC2.Label {
             Layout.fillWidth: true
             Layout.preferredWidth: 1
+            Layout.topMargin: Kirigami.Units.smallSpacing
             visible: root.installer && root.installer.outdated
             wrapMode: Text.Wrap
             text: qsTr("Updating installs the new widget and restarts the Plasma shell. Your panels and desktop reload for a few seconds.")
-        }
-
-        QQC2.Label {
-            Layout.fillWidth: true
-            Layout.preferredWidth: 1
-            visible: blur.errorString.length > 0
-            wrapMode: Text.Wrap
-            color: Kirigami.Theme.negativeTextColor
-            text: blur.errorString
         }
 
         QQC2.Label {
@@ -238,6 +218,8 @@ Item {
             text: qsTr("Plasmoid installed. Add xSpeedTest from Add Widgets on your desktop or panel.")
         }
 
+        Gap {}
+
         QQC2.Button {
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: Kirigami.Units.gridUnit * 8
@@ -246,5 +228,7 @@ Item {
             text: qsTr("Apply")
             onClicked: root.apply()
         }
+
+        Gap {}
     }
 }
