@@ -51,7 +51,7 @@ public:
 
     Q_INVOKABLE void start();
     Q_INVOKABLE void cancel();
-    void parseLine(const QByteArray &line);
+    Q_INVOKABLE void parseLine(const QByteArray &line);
 
 signals:
     void phaseChanged();

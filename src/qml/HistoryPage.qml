@@ -8,24 +8,29 @@ Item {
 
     required property SpeedSettings settings
     required property HistoryModel history
+    property bool compact: false
+    property real minWidth: Kirigami.Units.gridUnit * 17
 
-    readonly property real rowHeight: Kirigami.Units.gridUnit * 1.9
+    readonly property real rowHeight: Kirigami.Units.gridUnit * (compact ? 1.6 : 1.9)
+    readonly property int visibleRows: Math.max(2, Math.min(history.count, 6))
 
-    implicitWidth: Kirigami.Units.gridUnit * 22
-    implicitHeight: Kirigami.Units.gridUnit * 20
+    implicitWidth: compact ? minWidth : Kirigami.Units.gridUnit * 22
+    implicitHeight: compact ? column.implicitHeight : Kirigami.Units.gridUnit * 20
 
     ColumnLayout {
+        id: column
         anchors.fill: parent
-        spacing: Kirigami.Units.largeSpacing
+        spacing: root.compact ? Kirigami.Units.smallSpacing : Kirigami.Units.largeSpacing
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Kirigami.Units.largeSpacing
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+            Layout.leftMargin: root.compact ? 0 : Kirigami.Units.largeSpacing
+            Layout.rightMargin: root.compact ? 0 : Kirigami.Units.largeSpacing
 
             QQC2.Label {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 3
+                elide: Text.ElideRight
                 text: qsTr("Date / Time")
                 color: Kirigami.Theme.disabledTextColor
                 font.weight: Font.DemiBold
@@ -34,7 +39,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 2
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Download (%1)").arg(root.settings.unitLabel)
+                elide: Text.ElideRight
+                text: root.compact ? qsTr("Download") : qsTr("Download (%1)").arg(root.settings.unitLabel)
                 color: Kirigami.Theme.disabledTextColor
                 font.weight: Font.DemiBold
             }
@@ -42,7 +48,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 2
                 horizontalAlignment: Text.AlignRight
-                text: qsTr("Upload (%1)").arg(root.settings.unitLabel)
+                elide: Text.ElideRight
+                text: root.compact ? qsTr("Upload") : qsTr("Upload (%1)").arg(root.settings.unitLabel)
                 color: Kirigami.Theme.disabledTextColor
                 font.weight: Font.DemiBold
             }
@@ -55,7 +62,8 @@ Item {
         ListView {
             id: list
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillHeight: !root.compact
+            Layout.preferredHeight: root.compact ? root.visibleRows * root.rowHeight : -1
             clip: true
             model: root.history
             boundsBehavior: Flickable.StopAtBounds

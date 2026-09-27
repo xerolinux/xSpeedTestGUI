@@ -5,12 +5,13 @@ ecm_add_qml_module(xspeedtest
     URI "org.xspeedtest"
     VERSION 1.0
     GENERATE_PLUGIN_SOURCE
-    DEPENDENCIES QtQuick
+    DEPENDENCIES QtQuick QtQuick.Effects
 )
 
 target_sources(xspeedtest PRIVATE
     historymodel.cpp
     paths.cpp
+    resultshare.cpp
     plasmoidinstaller.cpp
     speedsettings.cpp
     speedtestrunner.cpp
@@ -28,6 +29,7 @@ ecm_target_qml_sources(xspeedtest SOURCES
     qml/Readout.qml
     qml/SettingsPage.qml
     qml/SettingsRow.qml
+    qml/ShareCard.qml
     qml/SpeedPanel.qml
     qml/SpeedView.qml
     qml/SplitLayout.qml

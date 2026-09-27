@@ -112,6 +112,13 @@ Item {
         anchors.fill: parent
         renderTarget: Canvas.FramebufferObject
 
+        // The FBO render target can be left holding a stretched frame from before a resize
+        // settles (seen on the panel popup, whose size changes every time it opens). Force a
+        // fresh paint at the final size instead of relying on Canvas to notice by itself.
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+        Component.onCompleted: requestPaint()
+
         onPaint: {
             var ctx = getContext("2d");
             ctx.reset();

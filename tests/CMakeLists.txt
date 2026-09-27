@@ -9,6 +9,11 @@ endfunction()
 
 xspeedtest_test(tst_history ${CORE_SRC}/historymodel.cpp)
 
+add_executable(tst_resultshare tst_resultshare.cpp ${CORE_SRC}/resultshare.cpp)
+target_include_directories(tst_resultshare PRIVATE ${CORE_SRC})
+target_link_libraries(tst_resultshare PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
+add_test(NAME tst_resultshare COMMAND tst_resultshare)
+
 xspeedtest_test(tst_settings ${CORE_SRC}/speedsettings.cpp)
 
 xspeedtest_test(tst_plasmoidinstaller ${CORE_SRC}/plasmoidinstaller.cpp ${CORE_SRC}/paths.cpp)

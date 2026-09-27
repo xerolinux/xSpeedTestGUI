@@ -9,6 +9,8 @@ Item {
     required property SpeedSettings settings
     property PlasmoidInstaller installer: null
     property bool showOpacity: true
+    property bool compact: false
+    property real minWidth: Kirigami.Units.gridUnit * 14
 
     property bool justInstalled: false
 
@@ -24,11 +26,12 @@ Item {
         || pendingAutoStart !== settings.autoStart
         || pendingAnimate !== settings.animate
 
-    implicitWidth: Kirigami.Units.gridUnit * 22
-    implicitHeight: Kirigami.Units.gridUnit * 20
+    implicitWidth: compact ? Math.max(layout.implicitWidth, minWidth) : Kirigami.Units.gridUnit * 22
+    implicitHeight: compact ? layout.implicitHeight : Kirigami.Units.gridUnit * 20
 
     component Gap: Item {
-        Layout.fillHeight: true
+        Layout.fillHeight: !root.compact
+        Layout.preferredHeight: root.compact ? Kirigami.Units.smallSpacing : -1
         Layout.minimumHeight: Kirigami.Units.smallSpacing
     }
 

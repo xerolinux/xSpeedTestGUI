@@ -1,5 +1,5 @@
 pkgname=xspeedtest
-pkgver=0.1.0
+pkgver=0.1.2
 pkgrel=1
 pkgdesc='Qt 6 / QML front-end for speedtest-cli with a Plasma 6 widget'
 arch=('x86_64')

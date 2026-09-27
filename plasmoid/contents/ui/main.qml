@@ -63,6 +63,8 @@ PlasmoidItem {
         Layout.minimumHeight: panel.implicitHeight
         Layout.preferredWidth: Layout.minimumWidth
         Layout.preferredHeight: Layout.minimumHeight
+        Layout.maximumWidth: Layout.minimumWidth
+        Layout.maximumHeight: Layout.minimumHeight
 
         Rectangle {
             anchors.fill: parent
@@ -77,6 +79,8 @@ PlasmoidItem {
             anchors.fill: parent
             padding: Kirigami.Units.gridUnit * (root.desktop ? 1.4 : 0.9)
             compact: !root.desktop
+            pagesCompact: true
+            pagesMinWidth: Kirigami.Units.gridUnit * (root.desktop ? 24 : 17)
             animate: root.expanded || root.desktop
             idleDrift: false
             runner: testRunner

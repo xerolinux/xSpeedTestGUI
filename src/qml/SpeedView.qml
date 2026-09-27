@@ -16,7 +16,7 @@ Item {
     readonly property string layoutName: compact ? "compact" : style.layout
     readonly property bool overlay: Styles.overlay(style.viz, layoutName)
     readonly property real u: Kirigami.Units.gridUnit / 18
-    readonly property int chipColumns: layoutName === "center" || layoutName === "wide" || layoutName === "minimal" ? 4 : 2
+    readonly property int chipColumns: layoutName === "center" || layoutName === "wide" || layoutName === "minimal" || layoutName === "compact" ? 4 : 2
     readonly property bool errorState: runner.phase === SpeedTestRunner.Error
     readonly property var chipLabels: [qsTr("Ping"), qsTr("Jitter"), qsTr("Down"), qsTr("Up")]
 
